@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>摩点订单查询</title>
+  <style>
+    body{font-family:Arial;background:#f4f7fb;padding:40px;display:flex;justify-content:center}
+    .card{background:#fff;padding:24px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.08);width:100%;max-width:520px}
+    input{width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px}
+    button{width:100%;padding:12px;border-radius:8px;border:0;background:#007bff;color:#fff;font-size:16px;cursor:pointer}
+    .result,.error{margin-top:16px;padding:12px;border-radius:8px}
+    .result{background:#eef7ff;border-left:4px solid #007bff}
+    .error{background:#fff0f0;border-left:4px solid #ff6b6b}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>摩点订单查询</h1>
+    <input id="order" placeholder="订单号（A列）">
+    <input id="userid" placeholder="用户ID（H列）">
+    <button onclick="lookup()">查询</button>
+    <div id="msg"></div>
+  </div>
+
+<script>
+async function lookup(){
+  const order=document.getElementById('order').value.trim();
+  const userid=document.getElementById('userid').value.trim();
+  const msg=document.getElementById('msg');
+  msg.innerHTML="";
+  if(!order||!userid){msg.innerHTML='<div class="error">请填写订单号和用户ID。</div>';return;}
+
+  const res=await fetch(`/api/lookup?order=${order}&userid=${userid}`);
+  const data=await res.json();
+  if(data.ok){
+    msg.innerHTML=`<div class='result'>序号：${data.serialNumber}<br>回报档标题：${data.rewardTitle}</div>`;
+  } else {
+    msg.innerHTML=`<div class='error'>${data.message}</div>`;
+  }
+}
+</script>
+</body>
+</html>
